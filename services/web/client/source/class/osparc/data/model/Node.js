@@ -78,9 +78,6 @@ qx.Class.define("osparc.data.model.Node", {
       if (metaData.outputs) {
         this.__addOutputs(metaData.outputs);
       }
-      if (metaData.dedicatedWidget) {
-        this.setDedicatedWidget(metaData.dedicatedWidget);
-      }
     }
   },
 
@@ -131,12 +128,6 @@ qx.Class.define("osparc.data.model.Node", {
 
     parentNodeId: {
       check: "String",
-      nullable: true
-    },
-
-    dedicatedWidget: {
-      check: "Boolean",
-      init: null,
       nullable: true
     },
 
@@ -228,20 +219,6 @@ qx.Class.define("osparc.data.model.Node", {
       return this.getKey().includes(str);
     },
 
-    hasDedicatedWidget: function() {
-      if (this.getDedicatedWidget() === null) {
-        return false;
-      }
-      return true;
-    },
-
-    showDedicatedWidget: function() {
-      if (this.hasDedicatedWidget()) {
-        return this.getDedicatedWidget();
-      }
-      return false;
-    },
-
     isContainer: function() {
       const hasKey = (this.getKey() === null);
       const hasChildren = this.hasChildren();
@@ -273,6 +250,10 @@ qx.Class.define("osparc.data.model.Node", {
 
     getInputsDefault: function() {
       return this.__inputsDefault;
+    },
+
+    hasInputsDefault: function() {
+      return Object.keys(this.__inputsDefault).length;
     },
 
     getInput: function(outputId) {
@@ -346,6 +327,18 @@ qx.Class.define("osparc.data.model.Node", {
     },
 
     getInputNodes: function() {
+      const inputNodes = [];
+      const inputNodeIds = this.getInputNodeIds();
+      for (let i = 0; i < inputNodeIds.length; i++) {
+        const inputNode = this.getWorkbench().getNode(inputNodeIds[i]);
+        if (inputNode) {
+          inputNodes.push(inputNode);
+        }
+      }
+      return inputNodes;
+    },
+
+    getInputNodeIds: function() {
       return this.__inputNodes;
     },
 
@@ -967,7 +960,7 @@ qx.Class.define("osparc.data.model.Node", {
         label: this.getLabel(),
         inputs: this.getInputValues(),
         inputAccess: this.getInputAccess(),
-        inputNodes: this.getInputNodes(),
+        inputNodes: this.getInputNodeIds(),
         outputNode: this.getIsOutputNode(),
         outputs: this.getOutputValues(),
         parent: this.getParentNodeId(),

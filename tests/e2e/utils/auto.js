@@ -151,7 +151,7 @@ async function dashboardStudyBrowser(page) {
   }
 }
 
-async function dashboardEditFristStudyThumbnail(page) {
+async function dashboardEditFirstStudyThumbnail(page) {
   console.log("Editing thumbnail")
 
   await page.waitForSelector('[osparc-test-id="studiesTabBtn"]')
@@ -231,6 +231,11 @@ async function dashboardOpenFirstTemplate(page, templateName) {
   console.log("Opening 'my sleepers'");
   await page.waitForSelector('[osparc-test-id="newStudySubmitBtn"]')
   await page.click('[osparc-test-id="newStudySubmitBtn"]')
+
+  //await page.waitFor(2000);
+
+  //await page.waitForSelector('[osparc-test-id="runStudyBtn"]')
+  //await page.click('[osparc-test-id="runStudyBtn"]')
 }
 
 async function __dashboardFilterStudiesByText(page, templateName) {
@@ -351,7 +356,7 @@ module.exports = {
   dashboardServiceBrowser,
   dashboardDataBrowser,
   dashboardStudyBrowser,
-  dashboardEditFristStudyThumbnail,
+  dashboardEditFirstStudyThumbnail,
   dashboardNewStudy,
   dashboardOpenFirstTemplate,
   runStudy,

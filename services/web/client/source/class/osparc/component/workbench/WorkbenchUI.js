@@ -460,8 +460,8 @@ qx.Class.define("osparc.component.workbench.WorkbenchUI", {
       this.__clearNodeInputUIs();
       const inputNodes = model.getInputNodes();
       for (let i = 0; i < inputNodes.length; i++) {
-        let inputNode = this.getWorkbench().getNode(inputNodes[i]);
-        let inputLabel = this.__createNodeInputUI(inputNode);
+        const inputNode = inputNodes[i];
+        const inputLabel = this.__createNodeInputUI(inputNode);
         this.__nodesUI.push(inputLabel);
       }
     },
@@ -750,7 +750,7 @@ qx.Class.define("osparc.component.workbench.WorkbenchUI", {
 
         for (const nodeUuid in nodes) {
           const node = nodes[nodeUuid];
-          const inputNodes = node.getInputNodes();
+          const inputNodes = node.getInputNodeIds();
           for (let i = 0; i < inputNodes.length; i++) {
             let inputNode = inputNodes[i];
             if (inputNode in nodes) {

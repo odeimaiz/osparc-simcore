@@ -40,7 +40,7 @@ async function run () {
   await auto.toDashboard(page);
 
   // First study edition
-  await auto.dashboardEditFristStudyThumbnail(page);
+  await auto.dashboardEditFirstStudyThumbnail(page);
   await page.waitFor(2000);
 
   await auto.dashboardDataBrowser(page);

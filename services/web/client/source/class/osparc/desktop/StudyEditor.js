@@ -137,10 +137,9 @@ qx.Class.define("osparc.desktop.StudyEditor", {
       }, this);
       this.showInMainView(workbenchUI, "root");
 
-      const nodeView = this.__nodeView = new osparc.component.widget.NodeView().set({
+      this.__nodeView = new qxapp.component.widget.NodeView().set({
         minHeight: 200
       });
-      nodeView.setWorkbench(study.getWorkbench());
     },
 
     connectEvents: function() {
@@ -200,8 +199,7 @@ qx.Class.define("osparc.desktop.StudyEditor", {
       const workbench = this.getStudy().getWorkbench();
       if (widget != this.__workbenchUI && workbench.getNode(nodeId).isInKey("file-picker")) {
         // open file picker in window
-        const filePicker = new qx.ui.window.Window(widget.getNode().getLabel()).set({
-          appearance: "service-window",
+        const filePickerWin = new qx.ui.window.Window(widget.getNode().getLabel()).set({
           layout: new qx.ui.layout.Grow(),
           autoDestroy: true,
           contentPadding: 0,
@@ -214,13 +212,13 @@ qx.Class.define("osparc.desktop.StudyEditor", {
           const node = widget.getNode();
           this.nodeSelected(node.getParentNodeId() || "root");
         };
-        filePicker.add(widget);
-        qx.core.Init.getApplication().getRoot().add(filePicker);
-        filePicker.show();
-        filePicker.center();
+        filePickerWin.add(widget);
+        qx.core.Init.getApplication().getRoot().add(filePickerWin);
+        filePickerWin.show();
+        filePickerWin.center();
 
-        widget.addListener("finished", () => filePicker.close(), this);
-        filePicker.addListener("close", () => showParentWorkbench());
+        widget.addListener("finished", () => filePickerWin.close(), this);
+        filePickerWin.addListener("close", () => showParentWorkbench());
       } else {
         this.showInMainView(widget, nodeId);
       }
@@ -246,19 +244,18 @@ qx.Class.define("osparc.desktop.StudyEditor", {
       } else {
         let node = workbench.getNode(nodeId);
         if (node.isContainer()) {
-          if (node.hasDedicatedWidget() && node.showDedicatedWidget()) {
-            if (node.isInKey("multi-plot")) {
-              widget = new osparc.component.widget.DashGrid(node);
-            }
-          }
-          if (widget === null) {
+          // TODO: check if (node.hasDedicatedWidget() && node.showDedicatedWidget())???? Removed after merge conflict
+          if (node.isInKey("multi-plot")) {
+            widget = new osparc.component.widget.DashGrid(node);
+          } else {
             widget = this.__workbenchUI;
           }
         } else if (node.isInKey("file-picker")) {
           widget = new osparc.file.FilePicker(node, this.getStudy().getUuid());
+        } else if (node.isInKey("remote-renderer")) {
+          widget = new osparc.component.widget.RemoteRenderer(node, null);
         } else {
           this.__nodeView.setNode(node);
-          this.__nodeView.buildLayout();
           widget = this.__nodeView;
         }
       }
@@ -304,34 +301,8 @@ qx.Class.define("osparc.desktop.StudyEditor", {
     },
 
     showInMainView: function(widget, nodeId) {
-      const node = this.getStudy().getWorkbench().getNode(nodeId);
-      if (node && node.hasDedicatedWidget()) {
-        let dedicatedWrapper = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-        const dedicatedWidget = node.getDedicatedWidget();
-        const btnLabel = dedicatedWidget ? this.tr("Setup view") : this.tr("Grid view");
-        const btnIcon = dedicatedWidget ? "@FontAwesome5Solid/wrench/16" : "@FontAwesome5Solid/eye/16";
-        let expertModeBtn = new qx.ui.form.Button().set({
-          label: btnLabel,
-          icon: btnIcon,
-          gap: 10,
-          alignX: "right",
-          height: 25,
-          maxWidth: 150
-        });
-        expertModeBtn.addListener("execute", () => {
-          node.setDedicatedWidget(!dedicatedWidget);
-          this.nodeSelected(nodeId);
-        }, this);
-        dedicatedWrapper.add(expertModeBtn);
-        dedicatedWrapper.add(widget, {
-          flex: 1
-        });
-        this.__mainPanel.setMainView(dedicatedWrapper);
-      } else {
-        this.__mainPanel.setMainView(widget);
-      }
-
-      let nodesPath = this.getStudy().getWorkbench().getPathIds(nodeId);
+      this.__mainPanel.setMainView(widget);
+      const nodesPath = this.getStudy().getWorkbench().getPathIds(nodeId);
       this.fireDataEvent("changeMainViewCaption", nodesPath);
     },
 
