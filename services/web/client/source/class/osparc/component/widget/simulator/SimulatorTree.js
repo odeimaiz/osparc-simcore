@@ -20,7 +20,7 @@
  *
  */
 
-qx.Class.define("qxapp.component.widget.simulator.SimulatorTree", {
+qx.Class.define("osparc.component.widget.simulator.SimulatorTree", {
   extend: qx.ui.tree.VirtualTree,
 
   construct: function(simulator, node) {
@@ -47,7 +47,7 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorTree", {
     },
 
     node: {
-      check: "qxapp.data.model.Node",
+      check: "osparc.data.model.Node",
       nullable: false
     }
   },
@@ -58,7 +58,7 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorTree", {
 
   statics: {
     getMetaData(nodeKey, b, c) {
-      const store = qxapp.store.Store.getInstance();
+      const store = osparc.store.Store.getInstance();
       return store.getItem(nodeKey, b, c);
     },
 
@@ -73,7 +73,7 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorTree", {
     },
 
     createGlobalSettingData: function(simulatorKey, globalSettingKey, globalSettingVersion) {
-      const thisClass = qxapp.component.widget.simulator.SimulatorTree;
+      const thisClass = osparc.component.widget.simulator.SimulatorTree;
       const metadata = thisClass.getMetaData(simulatorKey, globalSettingKey);
       let newEntry = {
         key: globalSettingKey,
@@ -131,7 +131,7 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorTree", {
   members: {
     __getDelegate: function() {
       return {
-        createItem: () => new qxapp.component.widget.simulator.SimulatorTreeItem(),
+        createItem: () => new osparc.component.widget.simulator.SimulatorTreeItem(),
         configureItem: item => {
           item.set({
             droppable: true
@@ -170,7 +170,7 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorTree", {
               if (to.getIsDir()) {
                 const settingKey = to.getKey();
                 let cbk = function(isBranch) {
-                  const thisClass = qxapp.component.widget.simulator.SimulatorTree;
+                  const thisClass = osparc.component.widget.simulator.SimulatorTree;
                   let data = {};
                   if (isBranch) {
                     const metadata = thisClass.getMetaData(fromNodeKey, fromItemKey);
@@ -204,13 +204,13 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorTree", {
     },
 
     __populateTree: function() {
-      const thisClass = qxapp.component.widget.simulator.SimulatorTree;
+      const thisClass = osparc.component.widget.simulator.SimulatorTree;
       let data = thisClass.createRootData(this.getNode().getLabel());
       let rootModel = qx.data.marshal.Json.createModel(data, true);
       this.setModel(rootModel);
 
       const simulatorKey = this.getNode().getKey();
-      const store = qxapp.store.Store.getInstance();
+      const store = osparc.store.Store.getInstance();
       const itemList = store.getItemList(simulatorKey);
       for (let i=0; i<itemList.length; i++) {
         const newEntry = thisClass.createGlobalSettingData(simulatorKey, itemList[i].key, itemList[i].version);
@@ -233,7 +233,7 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorTree", {
         }
         switch (keyEvent.getKeyIdentifier()) {
           case "F2": {
-            let treeItemRenamer = new qxapp.component.widget.TreeItemRenamer(selectedItem);
+            let treeItemRenamer = new osparc.component.widget.TreeItemRenamer(selectedItem);
             treeItemRenamer.addListener("labelChanged", e => {
               let newLabel = e.getData()["newLabel"];
               selectedItem.setLabel(newLabel);
@@ -283,7 +283,7 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorTree", {
     addConceptSetting: function(globalSettingKey, conceptSettingKey) {
       const globalSetting = this.__getGlobalSettingModel(globalSettingKey);
       if (globalSetting) {
-        const thisClass = qxapp.component.widget.simulator.SimulatorTree;
+        const thisClass = osparc.component.widget.simulator.SimulatorTree;
         const simulatorKey = this.getNode().getKey();
         const metadata = thisClass.getMetaData(simulatorKey, globalSettingKey, conceptSettingKey);
         const newEntry = thisClass.createConceptSettingData(conceptSettingKey, metadata);

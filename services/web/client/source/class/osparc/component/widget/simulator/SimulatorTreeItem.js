@@ -20,7 +20,7 @@
  *
  */
 
-qx.Class.define("qxapp.component.widget.simulator.SimulatorTreeItem", {
+qx.Class.define("osparc.component.widget.simulator.SimulatorTreeItem", {
   extend: qx.ui.tree.VirtualTreeItem,
 
   construct: function() {
@@ -56,14 +56,14 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorTreeItem", {
     },
 
     node: {
-      check: "qxapp.data.model.Node",
+      check: "osparc.data.model.Node",
       nullable: false
     }
   },
 
   members: {
     createNode: function(workbench) {
-      const node = new qxapp.data.model.Node(workbench, this.getKey(), this.getVersion());
+      const node = new osparc.data.model.Node(workbench, this.getKey(), this.getVersion());
       this.setNode(node);
 
       const metadata = this.getMetadata();

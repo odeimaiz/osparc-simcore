@@ -137,7 +137,7 @@ qx.Class.define("osparc.desktop.StudyEditor", {
       }, this);
       this.showInMainView(workbenchUI, "root");
 
-      this.__nodeView = new qxapp.component.widget.NodeView().set({
+      this.__nodeView = new osparc.component.widget.NodeView().set({
         minHeight: 200
       });
     },

@@ -21,7 +21,7 @@
  *
  */
 
-qx.Class.define("qxapp.component.widget.simulator.SimulatorProps", {
+qx.Class.define("osparc.component.widget.simulator.SimulatorProps", {
   extend: qx.ui.core.Widget,
 
   construct: function() {
@@ -32,7 +32,7 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorProps", {
 
   properties: {
     node: {
-      check: "qxapp.data.model.Node",
+      check: "osparc.data.model.Node",
       nullable: true
     }
   },

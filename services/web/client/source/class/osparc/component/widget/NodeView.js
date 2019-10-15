@@ -27,7 +27,7 @@
  * Here is a little example of how to use the widget.
  *
  * <pre class='javascript'>
- *   let nodeView = new qxapp.component.widget.NodeView();
+ *   let nodeView = new osparc.component.widget.NodeView();
  *   nodeView.setNode(workbench.getNode1());
  *   this.getRoot().add(nodeView);
  * </pre>

@@ -20,7 +20,7 @@
  *
  */
 
-qx.Class.define("qxapp.component.widget.simulator.SimulatorActions", {
+qx.Class.define("osparc.component.widget.simulator.SimulatorActions", {
   extend: qx.ui.core.Widget,
 
   construct: function(simulator) {
@@ -51,12 +51,12 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorActions", {
 
   properties: {
     simulator: {
-      check: "qxapp.data.model.Node",
+      check: "osparc.data.model.Node",
       nullable: false
     },
 
     node: {
-      check: "qxapp.data.model.Node",
+      check: "osparc.data.model.Node",
       nullable: true
     }
   },
@@ -80,7 +80,7 @@ qx.Class.define("qxapp.component.widget.simulator.SimulatorActions", {
       newSettings.resetMenu();
       const node = this.getNode();
       if (node && node.hasInputsDefault()) {
-        const store = qxapp.store.Store.getInstance();
+        const store = osparc.store.Store.getInstance();
         const inputs = node.getInputsDefault();
         newSettings.setEnabled(true);
         const menu = new qx.ui.menu.Menu();

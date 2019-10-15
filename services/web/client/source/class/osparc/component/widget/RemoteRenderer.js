@@ -24,12 +24,12 @@
  * Here is a little example of how to use the widget.
  *
  * <pre class='javascript'>
- *   const remoteRenderer = new qxapp.component.widget.RemoteRenderer(webSocketUrl);
+ *   const remoteRenderer = new osparc.component.widget.RemoteRenderer(webSocketUrl);
  *   this.getRoot().add(remoteRenderer);
  * </pre>
  */
 
-qx.Class.define("qxapp.component.widget.RemoteRenderer", {
+qx.Class.define("osparc.component.widget.RemoteRenderer", {
   extend: qx.ui.core.Widget,
 
   /**

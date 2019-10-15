@@ -27,16 +27,16 @@
  * Here is a little example of how to use the widget.
  *
  * <pre class='javascript'>
- *   const simulator = new qxapp.component.widget.simulator.Simulator(node);
+ *   const simulator = new osparc.component.widget.simulator.Simulator(node);
  *   this.getRoot().add(simulator);
  * </pre>
  */
 
-qx.Class.define("qxapp.component.widget.simulator.Simulator", {
+qx.Class.define("osparc.component.widget.simulator.Simulator", {
   extend: qx.ui.core.Widget,
 
   /**
-    * @param node {qxapp.data.model.Node} Node owning the widget
+    * @param node {osparc.data.model.Node} Node owning the widget
   */
   construct: function(node) {
     this.base(arguments);
@@ -53,7 +53,7 @@ qx.Class.define("qxapp.component.widget.simulator.Simulator", {
 
   properties: {
     node: {
-      check: "qxapp.data.model.Node",
+      check: "osparc.data.model.Node",
       nullable: false
     }
   },
@@ -65,7 +65,7 @@ qx.Class.define("qxapp.component.widget.simulator.Simulator", {
     __modeler: null,
 
     __buildLayout: function() {
-      const simulatorActions = this.__simulatorActions = new qxapp.component.widget.simulator.SimulatorActions(this.getNode());
+      const simulatorActions = this.__simulatorActions = new osparc.component.widget.simulator.SimulatorActions(this.getNode());
       this._add(simulatorActions);
 
       const splitpane = new qx.ui.splitpane.Pane();
@@ -105,7 +105,7 @@ qx.Class.define("qxapp.component.widget.simulator.Simulator", {
         paddingLeft: 10,
         appearance: "toolbar-textfield"
       });
-      const simulatorTree = this.__simulatorTree = new qxapp.component.widget.simulator.SimulatorTree(this, this.getNode());
+      const simulatorTree = this.__simulatorTree = new osparc.component.widget.simulator.SimulatorTree(this, this.getNode());
 
       vBox.add(label);
       vBox.add(simulatorTree, {
@@ -123,7 +123,7 @@ qx.Class.define("qxapp.component.widget.simulator.Simulator", {
         paddingLeft: 10,
         appearance: "toolbar-textfield"
       });
-      const simulatorProps = this.__simulatorProps = new qxapp.component.widget.simulator.SimulatorProps(this.getNode());
+      const simulatorProps = this.__simulatorProps = new osparc.component.widget.simulator.SimulatorProps(this.getNode());
 
       vBox.add(label);
       vBox.add(simulatorProps, {
@@ -137,7 +137,7 @@ qx.Class.define("qxapp.component.widget.simulator.Simulator", {
       const inputNodes = this.getNode().getInputNodes();
       for (let i=0; i<inputNodes.length; i++) {
         if (inputNodes[i].isInKey("remote-renderer")) {
-          const modeler = this.__modeler = new qxapp.component.widget.RemoteRenderer(null);
+          const modeler = this.__modeler = new osparc.component.widget.RemoteRenderer(null);
           return modeler;
         }
       }
@@ -177,10 +177,10 @@ qx.Class.define("qxapp.component.widget.simulator.Simulator", {
       if (nodeKey) {
         switch (nodeKey) {
           case "simcore/services/dynamic/itis/s4l/simulator/neuron":
-            compatible = qxapp.dev.fake.neuron.Data.checkCompatibility(settingKey, fromNodeKey, fromItemKey);
+            compatible = osparc.dev.fake.neuron.Data.checkCompatibility(settingKey, fromNodeKey, fromItemKey);
             return compatible;
           case "simcore/services/dynamic/itis/s4l/simulator/lf":
-            compatible = qxapp.dev.fake.lf.Data.checkCompatibility(settingKey, fromNodeKey, fromItemKey);
+            compatible = osparc.dev.fake.lf.Data.checkCompatibility(settingKey, fromNodeKey, fromItemKey);
             return compatible;
         }
       }
