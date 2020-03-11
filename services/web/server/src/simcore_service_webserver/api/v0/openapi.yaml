@@ -7818,6 +7818,8 @@ paths:
         schema:
           type: string
     get:
+      tags:
+        - project
       summary: Gets sharing tokens for the given project_id
       operationId: get_export_study_tokens
       responses:
