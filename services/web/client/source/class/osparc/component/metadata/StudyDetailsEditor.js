@@ -75,17 +75,18 @@ qx.Class.define("osparc.component.metadata.StudyDetailsEditor", {
 
     __createDisplayView: function(study) {
       const displayView = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
-      displayView.add(this.__createButtons());
+      displayView.add(this.__createButtons(study));
       displayView.add(new osparc.component.metadata.StudyDetails(study), {
         flex: 1
       });
       return displayView;
     },
 
-    __createButtons: function() {
+    __createButtons: function(study) {
       const isCurrentUserOwner = this.__isCurrentUserOwner();
       const canCreateTemplate = osparc.data.Permissions.getInstance().canDo("studies.template.create");
       const canUpdateTemplate = osparc.data.Permissions.getInstance().canDo("studies.template.update");
+      const canExportStudy = osparc.data.Permissions.getInstance().canDo("study.export");
 
       const buttonsLayout = new qx.ui.container.Composite(new qx.ui.layout.HBox(8).set({
         alignY: "middle"
@@ -112,20 +113,29 @@ qx.Class.define("osparc.component.metadata.StudyDetailsEditor", {
         flex: 1
       });
 
-      if (isCurrentUserOwner && (!this.__isTemplate && canCreateTemplate)) {
-        const saveAsTemplateButton = new qx.ui.form.Button(this.tr("Save as template")).set({
-          appearance: "lg-button"
-        });
-        osparc.utils.Utils.setIdToWidget(saveAsTemplateButton, "saveAsTemplateBtn");
-        saveAsTemplateButton.addListener("execute", e => {
-          const btn = e.getTarget();
-          btn.setIcon("@FontAwesome5Solid/circle-notch/12");
-          btn.getChildControl("icon").getContentElement()
-            .addClass("rotate");
-          this.__saveAsTemplate(btn);
-        }, this);
-        buttonsLayout.add(saveAsTemplateButton);
-      }
+      const exportButton = new qx.ui.form.Button(this.tr("Export"), "@FontAwesome5Solid/share-alt/16").set({
+        appearance: "lg-button",
+        visibility: isCurrentUserOwner && !this.__isTemplate && canExportStudy ? "visible" : "excluded"
+      });
+      osparc.utils.Utils.setIdToWidget(exportButton, "exportStudyBtn");
+      exportButton.addListener("execute", e => {
+        this.__exportStudy(study);
+      }, this);
+      buttonsLayout.add(exportButton);
+
+      const saveAsTemplateButton = new qx.ui.form.Button(this.tr("Save as template")).set({
+        appearance: "lg-button",
+        visibility: isCurrentUserOwner && (!this.__isTemplate || canCreateTemplate) ? "visible" : "excluded"
+      });
+      osparc.utils.Utils.setIdToWidget(saveAsTemplateButton, "saveAsTemplateBtn");
+      saveAsTemplateButton.addListener("execute", e => {
+        const btn = e.getTarget();
+        btn.setIcon("@FontAwesome5Solid/circle-notch/12");
+        btn.getChildControl("icon").getContentElement()
+          .addClass("rotate");
+        this.__saveAsTemplate(btn);
+      }, this);
+      buttonsLayout.add(saveAsTemplateButton);
 
       return buttonsLayout;
     },
@@ -272,6 +282,24 @@ qx.Class.define("osparc.component.metadata.StudyDetailsEditor", {
           console.error(err);
           osparc.component.message.FlashMessenger.getInstance().logAs(this.tr("There was an error while updating the information."), "ERROR");
         });
+    },
+
+    __exportStudy: function(study) {
+      const win = new qx.ui.window.Window(this.tr("Export Study")).set({
+        layout: new qx.ui.layout.Grow(),
+        contentPadding: 0,
+        showMinimize: false,
+        showMaximize: false,
+        minWidth: 600,
+        centerOnAppear: true,
+        autoDestroy: true,
+        modal: true,
+        appearance: "service-window"
+      });
+
+      const exportStudy = new osparc.component.widget.ExportStudy(study);
+      win.add(exportStudy);
+      win.open();
     },
 
     __saveAsTemplate: function(btn) {

@@ -285,6 +285,26 @@ paths:
         default:
           $ref: './openapi.yaml#/components/responses/DefaultErrorResponse'
 
+  /projects/{project_id}/token:
+    parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Gets sharing tokens for the given project_id
+      operationId: get_export_study_tokens
+      responses:
+        '200':
+          description: got tokens for sharing study
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/export_study_tokens.yaml#/ExportStudyTokensEnveloped'
+        default:
+          $ref: './openapi.yaml#/components/responses/DefaultErrorResponse'
+
   /projects/{study_uuid}/tags/{tag_id}:
     parameters:
       - name: tag_id

@@ -23,6 +23,7 @@ from .resource_manager import setup_resource_manager
 from .rest import setup_rest
 from .security import setup_security
 from .session import setup_session
+from .share_study import setup_share_study
 from .socketio import setup_sockets
 from .statics import setup_statics
 from .storage import setup_storage
@@ -73,6 +74,7 @@ def create_application(config: Dict) -> web.Application:
     setup_users(app)
     setup_projects(app)  # needs storage
     setup_studies_access(app)
+    setup_share_study(app)
     setup_activity(app)
     setup_app_proxy(app)
     setup_resource_manager(app)

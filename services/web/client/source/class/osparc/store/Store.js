@@ -85,14 +85,14 @@ qx.Class.define("osparc.store.Store", {
       check: "Array",
       init: []
     },
+    shareStudy: {
+      check: "Object",
+      init: {}
+    },
     tags: {
       check: "Array",
       init: [],
       event: "changeTags"
-    },
-    statics: {
-      check: "Object",
-      init: {}
     }
   },
 
