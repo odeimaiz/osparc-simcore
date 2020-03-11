@@ -3,6 +3,7 @@
     This definition is consumed by the security_access_model to build an access model for the framework
     The access model is created upon setting up of the security subsystem
 """
+# fmt: off
 
 from simcore_postgres_database.models.users import UserRole
 
