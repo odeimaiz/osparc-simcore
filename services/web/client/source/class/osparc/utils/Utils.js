@@ -201,7 +201,7 @@ qx.Class.define("osparc.utils.Utils", {
     downloadLink: function(url, fileName, downloadStartedCB) {
       return new Promise((resolve, reject) => {
         let xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
+        xhr.open("POST", url, true);
         xhr.responseType = "blob";
         xhr.addEventListener("progress", () => {
           if (xhr.readyState === XMLHttpRequest.LOADING) {
