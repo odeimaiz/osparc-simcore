@@ -1,4 +1,4 @@
-// node jupyters.js [url] [user] [password] [--demo]
+// node jupyter-with-big-data.js [url] [user] [password] [--demo]
 
 const utils = require('../utils/utils');
 const tutorialBase = require('./tutorialBase');
@@ -31,10 +31,8 @@ async function runTutorial() {
       startTimeout,
       false
     );
-    console.log("HEY MAN I AM HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
     // open JLab
-    // await tutorial.openNode(0);
     await tutorial.waitFor(10000, "wait for jupyter lab to appear...")
     await tutorial.takeScreenshot("opened " + serviceName);
 
@@ -46,7 +44,7 @@ async function runTutorial() {
       iframes2.push(frame);
     }
     const jLabIframe = iframes2.find(iframe => iframe._url.includes(workbenchData["nodeIds"][0]));
-    await utils.waitAndClick(jLabIframe, '#jp-MainMenu > ul > li:nth-child(1)', timeout = 35000);
+    await utils.waitAndClick(jLabIframe, '#jp-MainMenu > ul > li:nth-child(1)', 35000);
     await tutorial.takeScreenshot("opened_File_menu");
     // click the New entry
     await utils.waitAndClick(jLabIframe, "#jp-mainmenu-file > ul > li:nth-child(1) > div.lm-Menu-itemLabel.p-Menu-itemLabel");
