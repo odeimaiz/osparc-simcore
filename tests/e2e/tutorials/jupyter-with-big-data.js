@@ -54,18 +54,30 @@ async function runTutorial() {
     await tutorial.takeScreenshot("created_File_New_Terminal_entry");
     await tutorial.waitFor(3000, "wait for terminal to start...");
     await tutorial.takeScreenshot("terminal is up");
-    await page.keyboard.type("cd work/workspace", {
+    await tutorial.__page.keyboard.type("cd work/workspace", {
+      delay: 100
+    });
+    await tutorial.__page.keyboard.press("Enter", {
       delay: 100
     });
     await tutorial.takeScreenshot("terminal in workspace");
-    await page.keyboard.type("fallocate -l 10G big_file.txt", {
+    await tutorial.__page.keyboard.type("fallocate -l 10G big_file.txt", {
+      delay: 100
+    });
+    await tutorial.__page.keyboard.press("Enter", {
       delay: 100
     });
     await tutorial.takeScreenshot("terminal created big_file");
-    await page.keyboard.type("ls -tlah", {
+    await tutorial.__page.keyboard.type("ls -tlah", {
+      delay: 100
+    });
+    await tutorial.__page.keyboard.press("Enter", {
       delay: 100
     });
     await tutorial.takeScreenshot("terminal ls");
+
+    // back to dashboard
+    await tutorial.toDashboard()
   }
   catch (err) {
     tutorial.setTutorialFailed(true);
