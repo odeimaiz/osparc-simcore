@@ -113,6 +113,34 @@ async function __waitForAllTemplates(page) {
   }
 }
 
+async function dashboardOpenFirstStudy(page, studyName) {
+  await utils.sleep(5000);
+
+  console.log("Opening Study");
+
+  await utils.takeScreenshot(page, "click on studies tab");
+  await __dashboardStudiesBrowser(page);
+  await utils.takeScreenshot(page, "clicked on studies tab");
+
+  if (studyName) {
+    await utils.takeScreenshot(page, "type filter text");
+    await __filterStudiesByText(page, studyName);
+    await utils.takeScreenshot(page, "typed filter text");
+  }
+
+  await page.waitForSelector('[osparc-test-id="studiesList"]');
+  const children = await utils.getVisibleChildrenIDs(page, '[osparc-test-id="studiesList"]');
+
+  if (children.length > 1) {
+    // First one is New Study
+    const firstChildId = '[osparc-test-id="' + children[1] + '"]';
+    await utils.waitAndClick(page, firstChildId);
+    return true;
+  }
+  console.log("Opening Study");
+  return false;
+}
+
 async function dashboardOpenFirstTemplate(page, templateName) {
   await utils.sleep(5000);
 
@@ -368,6 +396,7 @@ module.exports = {
   dashboardAbout,
   dashboardPreferences,
   dashboardNewStudy,
+  dashboardOpenFirstStudy,
   dashboardOpenFirstTemplate,
   dashboardOpenService,
   showLogger,

@@ -81,6 +81,9 @@ async function runTutorial() {
 
     // aprox 3' for 10GB
     await tutorial.waitFor(240000, "wait for study to close...");
+
+    // open study with same name as the service
+    await tutorial.openStudy();
   }
   catch (err) {
     tutorial.setTutorialFailed(true);
