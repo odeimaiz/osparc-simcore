@@ -77,7 +77,10 @@ async function runTutorial() {
     await tutorial.takeScreenshot("terminal ls");
 
     // back to dashboard
-    await tutorial.toDashboard()
+    await tutorial.toDashboard();
+
+    // aprox 3' for 10GB
+    await tutorial.waitFor(240000, "wait for study to close...");
   }
   catch (err) {
     tutorial.setTutorialFailed(true);
