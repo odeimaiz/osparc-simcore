@@ -21,8 +21,10 @@ async function runTutorial() {
   try {
     await tutorial.start();
 
+    await tutorial.waitFor(3000, "Let TI Plan switch cards");
+
     // check that the "New Study" is "New Plan"
-    await tutorial.checkFirstStudyId("newPlanButton");
+    await tutorial.checkFirstStudyCardId("newPlanButton");
 
     // create New Plan
     const studyData = await tutorial.startNewPlan();

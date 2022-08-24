@@ -172,11 +172,10 @@ class TutorialBase {
     }
   }
 
-  async checkFirstStudyId(studyId) {
+  async checkFirstStudyCardId(studyId) {
     await this.__page.waitForSelector('[osparc-test-id="studiesList"]');
-    await this.waitFor(1000);
     const studies = await utils.getVisibleChildrenIDs(this.__page, '[osparc-test-id="studiesList"]');
-    console.log("checkFirstStudyId", studyId);
+    console.log("checkFirstStudyCardId", studyId);
     console.log(studies);
     if (studyId !== studies[0]) {
       throw (studyId + " not found");
