@@ -456,8 +456,13 @@ qx.Class.define("osparc.desktop.credits.BuyCredits", {
             socket.on(slotName, jsonString => {
               const paymentData = JSON.parse(jsonString);
               if (paymentData["success"]) {
+                const msg = this.tr("Payment Successful");
+                osparc.component.message.FlashMessenger.getInstance().logAs(msg, "INFO");
                 // demo purposes
                 wallet.setCreditsAvailable(wallet.getCreditsAvailable() + nCredits);
+              } else {
+                const msg = this.tr("Payment Failed");
+                osparc.component.message.FlashMessenger.getInstance().logAs(msg, "ERROR");
               }
               socket.removeSlot(slotName);
               buyCreditsBtn();
@@ -478,7 +483,11 @@ qx.Class.define("osparc.desktop.credits.BuyCredits", {
               osparc.data.Resources.fetch("payments", "cancelPayment", params2);
             };
             // Listen to close window event
-            pgWindow.onbeforeunload = () => cancelPayment();
+            pgWindow.onbeforeunload = () => {
+              const msg = this.tr("The window was close. Try again and follow the instructions inside the opened window.");
+              osparc.component.message.FlashMessenger.getInstance().logAs(msg, "WARNING");
+              cancelPayment();
+            };
           })
           .catch(err => {
             console.error(err);
