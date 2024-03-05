@@ -207,9 +207,12 @@ qx.Class.define("osparc.CookiePolicy", {
           checkButtons.push(acceptLicense);
         } else {
           this.getChildControl("license-text-s4l");
-          const acceptLicense2 = this.getChildControl("accept-license-2");
+          const acceptLicense2 = this.getChildControl("accept-license");
           checkButtons.push(acceptLicense2);
         }
+        this.getChildControl("license-text-2");
+        const acceptLicense2 = this.getChildControl("accept-license-2");
+        checkButtons.push(acceptLicense2);
       }
 
       const acceptBtn = this.getChildControl("accept-button");
