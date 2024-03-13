@@ -92,7 +92,7 @@ qx.Class.define("osparc.desktop.StudyEditorIdlingTracker", {
         const flashMessageDurationS = Math.round(inactivityThresholdT * 0.2);
         this.__idlingTime++;
 
-        if (this.__idlingTime >= inactivityThresholdT && !this.__idleFlashMessageIsShowing) {
+        if (this.__idlingTime >= (inactivityThresholdT-flashMessageDurationS) && !this.__idleFlashMessageIsShowing) {
           const timeSinceInactivityThreshold = this.__idlingTime - inactivityThresholdT;
           if (timeSinceInactivityThreshold % this.self().INACTIVITY_REQUEST_PERIOD_S == 0) {
             // check if backend reports project as inactive
