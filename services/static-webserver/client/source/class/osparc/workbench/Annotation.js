@@ -71,6 +71,12 @@ qx.Class.define("osparc.workbench.Annotation", {
 
     representation: {
       init: null
+    },
+
+    selected: {
+      check: "Boolean",
+      init: false,
+      apply: "__applySelected"
     }
   },
 
@@ -180,7 +186,7 @@ qx.Class.define("osparc.workbench.Annotation", {
       }
     },
 
-    setSelected: function(selected) {
+    __applySelected: function(selected) {
       const representation = this.getRepresentation();
       if (representation) {
         switch (this.getType()) {
