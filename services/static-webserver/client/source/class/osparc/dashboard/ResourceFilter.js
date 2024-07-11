@@ -39,6 +39,14 @@ qx.Class.define("osparc.dashboard.ResourceFilter", {
     "changeServiceType": "qx.event.type.Data"
   },
 
+  properties: {
+    compactView: {
+      check: "Boolean",
+      init: false,
+      apply: "__applyCompactView"
+    }
+  },
+
   members: {
     __resourceType: null,
     __sharedWithButtons: null,
@@ -220,6 +228,21 @@ qx.Class.define("osparc.dashboard.ResourceFilter", {
           btn.setValue(filterData["serviceType"] === btn.id);
         });
       }
+    },
+
+    __applyCompactView: function(compact) {
+      [
+        this.__sharedWithButtons,
+        this.__tagButtons,
+        this.__serviceTypeButtons
+      ].forEach(btn => {
+        btn.getChildControl("label").setVisibility(compact ? "excluded" : "hidden");
+        if (compact) {
+          btn.setToolTipText(btn.getLabel());
+        } else {
+          btn.resetToolTipText();
+        }
+      });
     }
   }
 });

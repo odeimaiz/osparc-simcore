@@ -68,7 +68,9 @@ qx.Class.define("osparc.dashboard.ResourceBrowserBase", {
       }
 
       const compactVersion = w < this.__centerLayout.getMinWidth() + leftColumnWidth + emptyColumnMinWidth;
-      this.__leftLayout.setVisibility(compactVersion ? "excluded" : "visible");
+      if (this.__resourceFilter) {
+        this.__resourceFilter.setCompactView(compactVersion);
+      }
       rightColum.setVisibility(compactVersion ? "excluded" : "visible");
     };
     fitResourceCards();
@@ -368,7 +370,7 @@ qx.Class.define("osparc.dashboard.ResourceBrowserBase", {
     },
 
     _addResourceFilter: function() {
-      const resourceFilter = new osparc.dashboard.ResourceFilter(this._resourceType).set({
+      const resourceFilter = this.__resourceFilter = new osparc.dashboard.ResourceFilter(this._resourceType).set({
         marginTop: osparc.dashboard.SearchBarFilter.HEIGHT + 10, // aligned with toolbar buttons: search bar + spacing
         maxWidth: this.self().SIDE_SPACER_WIDTH,
         width: this.self().SIDE_SPACER_WIDTH
