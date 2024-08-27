@@ -11,6 +11,7 @@ import logging
 import os
 import random
 import re
+import urllib.parse
 from collections.abc import Callable, Iterator
 from contextlib import ExitStack
 from typing import Any, Final
@@ -381,6 +382,7 @@ def create_new_project_and_delete(
     def _(
         expected_states: tuple[RunningState] = (RunningState.NOT_STARTED,),
         press_open: bool = True,
+        template_id: str = None,
     ) -> dict[str, Any]:
         assert (
             len(created_project_uuids) == 0
@@ -390,15 +392,51 @@ def create_new_project_and_delete(
             f"Open project in {product_url=} as {product_billable=}",
         ) as ctx:
             waiter = SocketIOProjectStateUpdatedWaiter(expected_states=expected_states)
+            timeout = 60000 if template_id else 180000
             with (
-                log_in_and_out.expect_event("framereceived", waiter),
+                log_in_and_out.expect_event("framereceived", waiter, timeout=timeout),
                 page.expect_response(
-                    re.compile(r"/projects/[^:]+:open")
+                    re.compile(r"/projects/[^:]+:open"),
+                    timeout=timeout
                 ) as response_info,
             ):
                 # Project detail view pop-ups shows
                 if press_open:
-                    page.get_by_test_id("openResource").click()
+                    open_button = page.get_by_test_id("openResource")
+                    if template_id:
+                        # it returns a Long Running Task
+                        with page.expect_response(
+                            re.compile(rf"/projects\?from_study\={template_id}")
+                        ) as lrt:
+                            open_button.click()
+                        lrt_data = lrt.value.json()
+                        lrt_data = lrt_data["data"]
+                        with log_context(
+                            logging.INFO,
+                            f"Copying template data",
+                        ) as my_logger:
+                            # From the long running tasks response's urls, only their path is relevant
+                            def url_to_path(url):
+                                return urllib.parse.urlparse(url).path
+                            def wait_for_done(response):
+                                if url_to_path(response.url) == url_to_path(lrt_data["status_href"]):
+                                    resp_data = response.json()
+                                    resp_data = resp_data["data"]
+                                    assert "task_progress" in resp_data
+                                    task_progress = resp_data["task_progress"]
+                                    my_logger.logger.info(
+                                        "task progress: %s %s",
+                                        task_progress["percent"],
+                                        task_progress["message"],
+                                    )
+                                    return False
+                                if url_to_path(response.url) == url_to_path(lrt_data["result_href"]):
+                                    my_logger.logger.info("project created")
+                                    return response.status == 201
+                                return False
+                            page.expect_response(wait_for_done, timeout=timeout)
+                    else:
+                        open_button.click()
                 if product_billable:
                     # Open project with default resources
                     page.get_by_test_id("openWithResources").click()
@@ -467,6 +505,23 @@ def start_study_from_plus_button(
 
 
 @pytest.fixture
+def find_and_click_template_in_dashboard(
+    page: Page,
+) -> Callable[[str], None]:
+    def _(template_id: str) -> None:
+        with log_context(logging.INFO, f"Finding {template_id=} in dashboard"):
+            page.get_by_test_id("templatesTabBtn").click()
+            _textbox = page.get_by_test_id("searchBarFilter-textField-template")
+            _textbox.fill(template_id)
+            _textbox.press("Enter")
+            # OM: use this: test_id = "templateBrowserListItem_" + template_id
+            test_id = "studyBrowserListItem_" + template_id
+            page.get_by_test_id(test_id).click()
+
+    return _
+
+
+@pytest.fixture
 def find_and_start_service_in_dashboard(
     page: Page,
 ) -> Callable[[ServiceType, str, str | None], None]:
@@ -478,7 +533,7 @@ def find_and_start_service_in_dashboard(
             _textbox = page.get_by_test_id("searchBarFilter-textField-service")
             _textbox.fill(service_name)
             _textbox.press("Enter")
-            test_id = f"studyBrowserListItem_simcore/services/{'dynamic' if service_type is ServiceType.DYNAMIC else 'comp'}"
+            test_id = f"serviceBrowserListItem_simcore/services/{'dynamic' if service_type is ServiceType.DYNAMIC else 'comp'}"
             if service_key_prefix:
                 test_id = f"{test_id}/{service_key_prefix}"
             test_id = f"{test_id}/{service_name}"
@@ -503,6 +558,19 @@ def create_project_from_new_button(
 
 
 @pytest.fixture
+def create_project_from_template_dashboard(
+    find_and_click_template_in_dashboard: Callable[[str], None],
+    create_new_project_and_delete: Callable[[tuple[RunningState]], dict[str, Any]],
+) -> Callable[[ServiceType, str, str | None], dict[str, Any]]:
+    def _(template_id: str) -> dict[str, Any]:
+        find_and_click_template_in_dashboard(template_id)
+        expected_states = (RunningState.UNKNOWN,)
+        return create_new_project_and_delete(expected_states, True, template_id)
+
+    return _
+
+
+@pytest.fixture
 def create_project_from_service_dashboard(
     find_and_start_service_in_dashboard: Callable[[ServiceType, str, str | None], None],
     create_new_project_and_delete: Callable[[tuple[RunningState]], dict[str, Any]],
@@ -516,7 +584,7 @@ def create_project_from_service_dashboard(
         expected_states = (RunningState.UNKNOWN,)
         if service_type is ServiceType.COMPUTATIONAL:
             expected_states = (RunningState.NOT_STARTED,)
-        return create_new_project_and_delete(expected_states)
+        return create_new_project_and_delete(expected_states, True)
 
     return _
 
