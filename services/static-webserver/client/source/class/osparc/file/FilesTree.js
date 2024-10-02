@@ -148,8 +148,8 @@ qx.Class.define("osparc.file.FilesTree", {
     populateStudyTree: function(studyId) {
       const treeName = osparc.product.Utils.getStudyAlias({firstUpperCase: true}) + " Files";
       this.__resetTree(treeName);
-      let studyModel = this.getModel();
-      this.self().addLoadingChild(studyModel);
+      let rootModel = this.getModel();
+      this.self().addLoadingChild(rootModel);
 
       const dataStore = osparc.store.Data.getInstance();
       return dataStore.getFilesByLocationAndDataset("0", studyId)
@@ -161,8 +161,8 @@ qx.Class.define("osparc.file.FilesTree", {
           if (files.length && "project_name" in files[0]) {
             this.__resetTree(files[0]["project_name"]);
           }
-          studyModel = this.getModel();
-          this.__filesToDataset("0", studyId, files, studyModel);
+          rootModel = this.getModel();
+          this.__filesToDataset("0", studyId, files, rootModel);
         });
     },
 
@@ -414,13 +414,13 @@ qx.Class.define("osparc.file.FilesTree", {
     },
 
     __itemsToNode: function(files) {
-      const currentModel = this.getModel();
-      this.self().removeLoadingChild(currentModel);
+      const rootModel = this.getModel();
+      this.self().removeLoadingChild(rootModel);
 
-      files.forEach(file => this.self().attachPathLabel(currentModel.getPathLabel(), file));
+      files.forEach(file => this.self().attachPathLabel(rootModel.getPathLabel(), file));
       const newModelToAdd = qx.data.marshal.Json.createModel(files, true);
-      currentModel.getChildren().append(newModelToAdd);
-      this.setModel(currentModel);
+      rootModel.getChildren().append(newModelToAdd);
+      this.setModel(rootModel);
       this.fireEvent("filesAddedToTree");
 
       return newModelToAdd;
@@ -511,16 +511,16 @@ qx.Class.define("osparc.file.FilesTree", {
     },
 
     getParent: function(childItem) {
-      const root = this.getModel();
+      const rootModel = this.getModel();
       const list = [];
-      this.__getItemsInTree(root, list);
+      this.__getItemsInTree(rootModel, list);
       return list.find(element => element.getChildren && element.getChildren().contains(childItem));
     },
 
     findItemId: function(itemId) {
-      const root = this.getModel();
+      const rootModel = this.getModel();
       const items = [];
-      this.__getItemsInTree(root, items);
+      this.__getItemsInTree(rootModel, items);
       return items.find(element => "getItemId" in element && element.getItemId() === itemId);
     },
 
@@ -544,9 +544,9 @@ qx.Class.define("osparc.file.FilesTree", {
     },
 
     __findUuidInLeaves: function(uuid) {
-      const root = this.getModel();
+      const rootModel = this.getModel();
       const leaves = [];
-      this.__getLeavesInTree(root, leaves);
+      this.__getLeavesInTree(rootModel, leaves);
       return leaves.find(element => element.getFileId() === uuid);
     },
 
