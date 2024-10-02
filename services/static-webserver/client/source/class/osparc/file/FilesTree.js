@@ -253,9 +253,7 @@ qx.Class.define("osparc.file.FilesTree", {
       }
     },
 
-    __resetTree: function(treeName) {
-      // FIXME: It is not resetting the model
-      this.resetModel();
+    __treeNameToModel: function(treeName) {
       const rootData = {
         label: treeName,
         itemId: treeName.replace(/\s/g, ""), // remove all white spaces
@@ -264,9 +262,15 @@ qx.Class.define("osparc.file.FilesTree", {
         pathLabel: [treeName],
         children: []
       };
-      const root = qx.data.marshal.Json.createModel(rootData, true);
+      return qx.data.marshal.Json.createModel(rootData, true);
+    },
 
-      this.setModel(root);
+    __resetTree: function(treeName) {
+      // FIXME: It is not resetting the model
+      this.resetModel();
+
+      const rootModel = this.__treeNameToModel(treeName);
+      this.setModel(rootModel);
       this.setDelegate({
         createItem: () => new osparc.file.FileTreeItem(),
         bindItem: (c, item, id) => {
