@@ -48,6 +48,8 @@ qx.Class.define("osparc.ui.window.Window", {
       }
     });
 
+    this.addListener("move", () => this.__windowMoved(), this);
+
     const commandEsc = new qx.ui.command.Command("Esc");
     commandEsc.addListener("execute", () => {
       this.fireEvent("cancel");
@@ -130,6 +132,38 @@ qx.Class.define("osparc.ui.window.Window", {
         const props = this.getLayoutProperties();
         this.moveTo(props.left, Math.max(props.top-up, 0));
       }, 2);
+    },
+
+    __windowMoved: function() {
+      // enforce it stays within the screen
+      const bounds = this.getBounds(); // current window position/size
+      const root = qx.core.Init.getApplication().getRoot();
+      const parentBounds = root.getBounds(); // available screen area
+      if (!bounds || !parentBounds) {
+        return;
+      }
+
+      let {
+        left,
+        top,
+      } = bounds;
+
+      // Clamp horizontal position
+      left = Math.min(
+        Math.max(left, 0),
+        parentBounds.width - bounds.width
+      );
+
+      // Clamp vertical position
+      top = Math.min(
+        Math.max(top, 0),
+        parentBounds.height - bounds.height
+      );
+
+      // Only apply correction if needed
+      if (left !== bounds.left || top !== bounds.top) {
+        this.moveTo(left, top);
+      }
     }
   }
 });
